@@ -1,0 +1,57 @@
+# MÖRK BORG: THE ROTTING CRYPT
+
+## Adventure Overview
+
+A foul stench emanates from the ancient crypt of Sarkash. Villagers whisper of moving shadows and missing livestock. The desperate village elder offers what little silver remains to brave souls willing to venture into the darkness.
+
+## Setting
+
+The world teeters on the edge of apocalypse. The sun barely rises, casting a sickly yellow glow across the blighted land. The Two-Headed Basilisks have been seen in the sky - the third omen of the coming end times.
+
+## The Village of Grift
+
+A collection of rotting hovels huddled against the cruel winds. Notable locations:
+- The Hanged Pig Inn (watered-down ale, suspicious meat stew)
+- Elder Morten's hut (missing an eye, keeps a rusted sword under his bed)
+- The Gallows (freshly used, crows picking at the remains)
+
+## The Crypt
+
+### Entrance
+Ancient stone steps descend into darkness. The door is carved with symbols of death and warning. A dessicated corpse lies on the steps, its flesh melted away in patches.
+
+### Main Chamber
+Four stone sarcophagi line the walls. Black candles burn with unnatural purple flames. The air is thick with the scent of decay.
+
+### The Unholy Altar
+Blood-stained stone altar surrounded by bones arranged in a strange pattern. A black iron chalice sits atop it, filled with a bubbling dark liquid.
+
+### The Necromancer's Chamber
+Hidden behind a fake wall in the main chamber. Contains arcane tools, forbidden tomes, and a half-completed ritual circle.
+
+## NPCs
+
+### Elder Morten
+Village leader, desperate and afraid. Will offer 15 silver pieces and a "blessed" dagger (it's not actually blessed).
+
+### The Necromancer Vyrn
+Once human, now something else. Skin like parchment stretched over bone. Attempting to summon an ancient entity to gain immortality.
+
+### The Risen Dead
+Shambling corpses animated by Vyrn's foul magic. Slow but relentless, with rotting limbs and an insatiable hunger for living flesh.
+
+## Treasures
+
+- Vyrn's Spellbook (contains dangerous but valuable forbidden knowledge)
+- The Chalice of Unlife (can animate small dead creatures once per day)
+- Ancient burial jewelry (worth 25 silver to the right buyer)
+- Cursed coins (10 silver pieces that slowly poison their owner)
+
+## Random Encounters (d6)
+
+1. 1d4 risen corpses shambling through the crypt
+2. A terrified villager hiding in an alcove
+3. A swarm of carnivorous rats with glowing red eyes
+4. Poisonous fungal spores that cause hallucinations
+5. A collapsing ceiling trap
+6. The ghost of a previous adventurer warning of danger ahead

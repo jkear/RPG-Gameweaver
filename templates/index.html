@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPG Gameweaver</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>RPG Gameweaver</h1>
+        </header>
+
+        <main class="main-layout">
+            <!-- Left Column: Map Area -->
+            <div class="map-area">
+                <div class="tab-buttons">
+                    <button class="tab-link active" data-tab="world-map">World</button>
+                    <button class="tab-link" data-tab="local-map">Room</button>
+                    <button class="tab-link" data-tab="battle-screen">Battle</button>
+                    <button class="tab-link" data-tab="quest-tracker">Quests</button>
+                    <button class="tab-link" data-tab="character-info">Characters</button>
+                </div>
+                <div class="tab-content-area">
+                    <div id="world-map" class="tab-content active">
+                        <h2>World Map</h2>
+                        <div class="map-controls">
+                            <button id="zoom-in">+</button>
+                            <button id="zoom-out">-</button>
+                            <button id="center-map"><i class="fas fa-crosshairs"></i></button>
+                        </div>
+                        <div class="map-container">
+                            <img src="https://via.placeholder.com/800x600.png?text=World+Map" alt="World Map" class="map-image">
+                            <!-- Map markers would be positioned here -->
+                            <div class="map-marker" style="top: 45%; left: 55%;" title="Party Location">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="map-marker quest-marker" style="top: 30%; left: 70%;" title="Quest: The Dragon's Lair">
+                                <i class="fas fa-dragon"></i>
+                            </div>
+                        </div>
+                        <div class="map-legend">
+                            <div class="legend-item"><span class="legend-icon party"></span> Party Location</div>
+                            <div class="legend-item"><span class="legend-icon quest"></span> Active Quest</div>
+                            <div class="legend-item"><span class="legend-icon town"></span> Settlement</div>
+                            <div class="legend-item"><span class="legend-icon dungeon"></span> Dungeon</div>
+                        </div>
+                    </div>
+                    
+                    <div id="local-map" class="tab-content">
+                        <h2>Room Map</h2>
+                        <div class="map-controls">
+                            <select id="room-selector">
+                                <option value="tavern">Tavern</option>
+                                <option value="dungeon-entrance">Dungeon Entrance</option>
+                                <option value="crypt">Abandoned Crypt</option>
+                            </select>
+                        </div>
+                        <div class="map-container">
+                            <img src="https://via.placeholder.com/800x600.png?text=Local+Area+Map" alt="Local Area Map" class="map-image">
+                            <!-- Room objects and interactive elements -->
+                            <div class="room-object" style="top: 25%; left: 40%;" title="Chest">
+                                <i class="fas fa-box-open"></i>
+                            </div>
+                            <div class="room-object character" style="top: 50%; left: 50%;" title="Player Character">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="room-object npc" style="top: 45%; left: 70%;" title="Tavern Keeper">
+                                <i class="fas fa-person-booth"></i>
+                            </div>
+                        </div>
+                        <div class="room-description">
+                            <p>The tavern is dimly lit with oil lamps, casting long shadows across the wooden floor. A fire crackles in the hearth, providing warmth to weary travelers. The air is thick with pipe smoke and the scent of ale.</p>
+                        </div>
+                    </div>
+                    
+                    <div id="battle-screen" class="tab-content">
+                        <h2>Battle Screen</h2>
+                        <div class="battle-controls">
+                            <button id="initiative-roll">Roll Initiative</button>
+                            <button id="next-turn">Next Turn</button>
+                            <label><input type="checkbox" id="show-enemy-hp-toggle"> Show Enemy Stats</label>
+                        </div>
+                        
+                        <div class="battle-area">
+                            <div class="enemies-section">
+                                <h3>Enemies</h3>
+                                <ul id="enemy-list" class="combatant-list">
+                                    <li class="active-turn">
+                                        <div class="combatant-info">
+                                            <span class="combatant-name">Skeleton Warrior</span>
+                                            <div class="combatant-stats">
+                                                <span class="stat">HP: <span class="enemy-hp">12</span>/20</span>
+                                                <span class="stat">AC: 14</span>
+                                                <span class="stat">Init: +2</span>
+                                            </div>
+                                        </div>
+                                        <div class="combatant-actions">
+                                            <button class="target-btn">Target</button>
+                                            <button class="toggle-hp">Edit HP</button>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="combatant-info">
+                                            <span class="combatant-name">Dark Cultist</span>
+                                            <div class="combatant-stats">
+                                                <span class="stat">HP: <span class="enemy-hp">18</span>/18</span>
+                                                <span class="stat">AC: 12</span>
+                                                <span class="stat">Init: +1</span>
+                                            </div>
+                                        </div>
+                                        <div class="combatant-actions">
+                                            <button class="target-btn">Target</button>
+                                            <button class="toggle-hp">Edit HP</button>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div class="players-section">
+                                <h3>Players</h3>
+                                <ul id="player-list" class="combatant-list">
+                                    <li>
+                                        <div class="combatant-info">
+                                            <span class="combatant-name">Valmir the Bold</span>
+                                            <div class="combatant-stats">
+                                                <span class="stat">HP: 24/30</span>
+                                                <span class="stat">AC: 16</span>
+                                                <span class="stat">Init: +3</span>
+                                            </div>
+                                        </div>
+                                        <div class="combatant-actions">
+                                            <button class="action-btn">Actions</button>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="initiative-tracker">
+                            <h3>Initiative Order</h3>
+                            <ol id="initiative-list">
+                                <li>Skeleton Warrior (20)</li>
+                                <li>Valmir the Bold (18)</li>
+                                <li>Dark Cultist (10)</li>
+                            </ol>
+                        </div>
+                    </div>
+                    
+                    <div id="quest-tracker" class="tab-content">
+                        <h2>Quest Tracker</h2>
+                        <div class="quest-controls">
+                            <select id="quest-filter">
+                                <option value="all">All Quests</option>
+                                <option value="active">Active Quests</option>
+                                <option value="completed">Completed Quests</option>
+                            </select>
+                            <button id="add-quest">Add Quest</button>
+                        </div>
+                        
+                        <div class="quest-list">
+                            <div class="quest-item active">
+                                <div class="quest-header">
+                                    <h3 class="quest-title">The Cursed Crypt</h3>
+                                    <span class="quest-status">Active</span>
+                                </div>
+                                <div class="quest-description">
+                                    <p>Investigate the ancient crypt beneath the abandoned church and discover the source of the undead plague.</p>
+                                </div>
+                                <div class="quest-objectives">
+                                    <h4>Objectives:</h4>
+                                    <ul>
+                                        <li class="completed">Find the entrance to the crypt</li>
+                                        <li>Discover the source of the undead plague</li>
+                                        <li>Defeat the necromancer</li>
+                                    </ul>
+                                </div>
+                                <div class="quest-rewards">
+                                    <h4>Rewards:</h4>
+                                    <ul>
+                                        <li>200 gold pieces</li>
+                                        <li>Tome of Necromancy</li>
+                                        <li>Favor with the Church of Light</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="quest-item">
+                                <div class="quest-header">
+                                    <h3 class="quest-title">Missing Caravan</h3>
+                                    <span class="quest-status">Active</span>
+                                </div>
+                                <div class="quest-description">
+                                    <p>A merchant caravan has gone missing on the road to Blackmoor. Investigate what happened and recover any survivors or goods.</p>
+                                </div>
+                                <div class="quest-objectives">
+                                    <h4>Objectives:</h4>
+                                    <ul>
+                                        <li>Find traces of the missing caravan</li>
+                                        <li>Discover what happened to the merchants</li>
+                                        <li>Recover the valuable cargo if possible</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="character-info" class="tab-content">
+                        <h2>Character Information</h2>
+                        <div class="character-controls">
+                            <select id="character-selector">
+                                <option value="all">All Characters</option>
+                                <option value="party">Party Members</option>
+                                <option value="npcs">Important NPCs</option>
+                            </select>
+                        </div>
+                        
+                        <div class="character-list">
+                            <div class="character-card player">
+                                <div class="character-portrait">
+                                    <img src="https://via.placeholder.com/100x100.png?text=PC" alt="Character Portrait">
+                                </div>
+                                <div class="character-details">
+                                    <h3>Valmir the Bold</h3>
+                                    <p class="character-subtitle">Human Fighter, Level 3</p>
+                                    <div class="character-stats">
+                                        <div class="stat-group">
+                                            <div class="stat-item">
+                                                <span class="stat-label">STR</span>
+                                                <span class="stat-value">16</span>
+                                            </div>
+                                            <div class="stat-item">
+                                                <span class="stat-label">AGI</span>
+                                                <span class="stat-value">14</span>
+                                            </div>
+                                            <div class="stat-item">
+                                                <span class="stat-label">PRE</span>
+                                                <span class="stat-value">12</span>
+                                            </div>
+                                            <div class="stat-item">
+                                                <span class="stat-label">TOU</span>
+                                                <span class="stat-value">15</span>
+                                            </div>
+                                        </div>
+                                        <div class="health-status">
+                                            <span class="health-label">HP:</span>
+                                            <span class="health-value">24/30</span>
+                                            <div class="health-bar">
+                                                <div class="health-fill" style="width: 80%;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="character-equipment">
+                                        <h4>Equipment</h4>
+                                        <ul>
+                                            <li>Longsword (+1)</li>
+                                            <li>Chain Mail</li>
+                                            <li>Shield</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="character-card npc">
+                                <div class="character-portrait">
+                                    <img src="https://via.placeholder.com/100x100.png?text=NPC" alt="NPC Portrait">
+                                </div>
+                                <div class="character-details">
+                                    <h3>Elias the Merchant</h3>
+                                    <p class="character-subtitle">Quest Giver - Missing Caravan</p>
+                                    <div class="character-description">
+                                        <p>A well-dressed merchant from Blackmoor who is desperate to find his missing caravan. He offers a substantial reward for its recovery.</p>
+                                    </div>
+                                    <div class="character-notes">
+                                        <h4>Notes</h4>
+                                        <p>Seems nervous about more than just the missing goods. Might be hiding something.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Middle Column: Controls -->
+            <div class="controls-column">
+                 <div class="voice-controls">
+                    <h3>Voice Controls</h3>
+                    <div class="voice-selector">
+                        <label for="gm-voice">Game Master Voice:</label>
+                        <select id="gm-voice">
+                            <option value="onyx">Onyx (Deep Male)</option>
+                            <option value="nova">Nova (Female Narrator)</option>
+                            <option value="shimmer">Shimmer (Monster)</option>
+                            <option value="alloy">Alloy (Male NPC)</option>
+                            <option value="echo">Echo (Player Character)</option>
+                            <option value="fable">Fable (Female NPC)</option>
+                        </select>
+                    </div>
+                    <div class="voice-toggle">
+                        <button id="voice-toggle-btn" class="toggle-btn off">Voice: OFF</button>
+                    </div>
+                </div>
+
+                <div class="game-actions">
+                    <h3>Game Actions</h3>
+                    <button id="start-btn">Start Game</button>
+                    <button id="save-btn">Save Game</button>
+                    <button id="players-btn">List Players</button>
+                    <button id="history-btn">Game History</button>
+                    <!-- Add other relevant action buttons here -->
+                </div>
+            </div>
+
+            <!-- Right Column: Chat Log and Input -->
+            <div class="chat-column">
+                <div id="game-output" class="terminal">
+                    <div class="welcome-message">
+                        <h2>Welcome to RPG Gameweaver</h2>
+                        <p>An agentic speech-to-speech RPG game master powered by OpenAI</p>
+                        <p>Type 'help' for available commands</p>
+                    </div>
+                    <!-- Game messages will appear here -->
+                </div>
+                <div class="command-input">
+                    <form id="command-form">
+                        <input type="text" id="command-input" placeholder="Enter your command..." autocomplete="off">
+                        <button type="submit">Send</button>
+                    </form>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>RPG Gameweaver - Powered by OpenAI</p>
+        </footer>
+    </div>
+
+    <!-- Modal Structure -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modal-title">Modal Title</h2>
+            <div id="modal-body">
+                Modal content goes here...
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

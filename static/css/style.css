@@ -1,0 +1,926 @@
+/* Main styles for Mörk Borg Game Master */
+:root {
+    --bg-color: #0e0e0e;
+    --primary-color: #c53c18;
+    --accent-color: #e2a804;
+    --text-color: #e0e0e0;
+    --dark-accent: #331c0e;
+    --terminal-bg: #0a0a0a;
+    --terminal-border: #333;
+    --button-color: #2a2a2a;
+    --button-hover: #444;
+    --modal-bg: rgba(10, 10, 10, 0.95);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Courier New', monospace;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Header */
+header {
+    padding: 1rem 0;
+    text-align: center;
+    border-bottom: 2px solid var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+header h1 {
+    color: var(--primary-color);
+    font-size: 2.5rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+/* Main Content Layout */
+main.main-layout { /* Changed selector and added grid */
+    flex: 1;
+    display: grid;
+    grid-template-columns: 2fr 1fr 2fr; /* Map | Controls | Chat */
+    gap: 1rem;
+    min-height: 0; /* Prevent grid blowout */
+    height: calc(100vh - 150px); /* Adjust based on header/footer height */
+}
+
+/* Left Column: Map Area */
+.map-area {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--dark-accent);
+    border-radius: 5px;
+    padding: 1rem;
+    overflow: hidden; /* Prevent content overflow */
+    min-height: 0; /* Ensure flex works correctly */
+}
+
+.tab-buttons {
+    display: flex;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--terminal-border);
+    flex-shrink: 0; /* Prevent buttons from shrinking */
+    flex-wrap: wrap; /* Allow tabs to wrap on smaller screens */
+}
+
+.tab-link {
+    padding: 0.5rem 0.8rem; /* Slightly smaller padding to fit more tabs */
+    cursor: pointer;
+    background-color: var(--button-color);
+    color: var(--text-color);
+    border: none;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    margin-right: 2px;
+    margin-bottom: 2px; /* Add margin for wrapped tabs */
+    transition: background-color 0.3s;
+    font-size: 0.9rem; /* Slightly smaller font */
+}
+
+.tab-link:hover {
+    background-color: var(--button-hover);
+}
+
+.tab-link.active {
+    background-color: var(--terminal-bg); /* Match terminal bg for active tab */
+    color: var(--accent-color);
+    border-bottom: 1px solid var(--terminal-bg); /* Hide bottom border */
+    position: relative;
+    top: 1px; /* Align with content area border */
+}
+
+.tab-content-area {
+    flex: 1; /* Allow content to fill space */
+    overflow-y: auto; /* Allow scrolling within tab content */
+    background-color: var(--terminal-bg); /* Match terminal bg */
+    padding: 1rem;
+    border: 1px solid var(--terminal-border);
+    border-top: none; /* Remove top border as tabs handle it */
+    border-radius: 0 0 5px 5px;
+    min-height: 0; /* Ensure flex works correctly */
+}
+
+.tab-content {
+    display: none; /* Hide inactive tabs */
+}
+
+.tab-content.active {
+    display: block; /* Show active tab */
+}
+
+/* Tab Content Styling */
+.tab-content h2 {
+    color: var(--accent-color);
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: center;
+    border-bottom: 1px solid var(--accent-color);
+    padding-bottom: 0.5rem;
+}
+
+.tab-content h3 {
+    color: var(--primary-color);
+    margin: 1rem 0 0.5rem;
+    font-size: 1.1rem;
+}
+
+/* Map Controls */
+.map-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    background-color: #1a1a1a;
+    border-radius: 3px;
+}
+
+.map-controls button {
+    padding: 0.3rem 0.6rem;
+    background-color: var(--button-color);
+    color: var(--text-color);
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.map-controls button:hover {
+    background-color: var(--button-hover);
+}
+
+.map-controls select {
+    padding: 0.3rem;
+    background-color: var(--terminal-bg);
+    color: var(--text-color);
+    border: 1px solid var(--terminal-border);
+    border-radius: 3px;
+}
+
+/* Map Container */
+.map-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border: 1px solid var(--terminal-border);
+    margin-bottom: 1rem;
+    border-radius: 3px;
+    background-color: #0e0e0e;
+}
+
+.map-image {
+    width: 100%;
+    display: block;
+}
+
+.map-marker {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: var(--accent-color);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.map-marker.quest-marker {
+    background-color: var(--primary-color);
+}
+
+.room-object {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background-color: #555;
+    border: 1px solid #888;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+}
+
+.room-object.character {
+    background-color: var(--accent-color);
+}
+
+.room-object.npc {
+    background-color: var(--primary-color);
+}
+
+.map-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+}
+
+.legend-icon {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-right: 5px;
+    border-radius: 50%;
+}
+
+.legend-icon.party { background-color: var(--accent-color); }
+.legend-icon.quest { background-color: var(--primary-color); }
+.legend-icon.town { background-color: #6b8e23; }
+.legend-icon.dungeon { background-color: #8b0000; }
+
+.room-description {
+    background-color: #1a1a1a;
+    padding: 0.5rem;
+    border-radius: 3px;
+    font-style: italic;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+/* Battle Screen Styles */
+.battle-controls {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.battle-controls button {
+    padding: 0.3rem 0.6rem;
+    background-color: var(--button-color);
+    color: var(--text-color);
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.battle-controls button:hover {
+    background-color: var(--button-hover);
+}
+
+.battle-area {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.enemies-section, .players-section {
+    background-color: #1a1a1a;
+    padding: 0.5rem;
+    border-radius: 3px;
+}
+
+.combatant-list {
+    list-style: none;
+    padding: 0;
+}
+
+.combatant-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    background-color: #252525;
+    border-radius: 3px;
+    border-left: 3px solid transparent;
+}
+
+.combatant-list li.active-turn {
+    border-left: 3px solid var(--accent-color);
+    background-color: #2a2a2a;
+}
+
+.combatant-info {
+    flex: 1;
+}
+
+.combatant-name {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 0.2rem;
+}
+
+.combatant-stats {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+}
+
+.stat {
+    color: #aaa;
+}
+
+.enemy-hp {
+    font-weight: bold;
+    color: var(--accent-color);
+}
+
+.combatant-actions {
+    display: flex;
+    gap: 0.3rem;
+}
+
+.combatant-actions button {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.8rem;
+    background-color: var(--button-color);
+    color: var(--text-color);
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.target-btn {
+    background-color: #8b0000;
+}
+
+.initiative-tracker {
+    background-color: #1a1a1a;
+    padding: 0.5rem;
+    border-radius: 3px;
+}
+
+#initiative-list {
+    padding-left: 1.5rem;
+    font-size: 0.9rem;
+}
+
+#initiative-list li {
+    margin-bottom: 0.3rem;
+}
+
+/* Quest Tracker Styles */
+.quest-controls {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    align-items: center;
+}
+
+.quest-controls select {
+    padding: 0.3rem;
+    background-color: var(--terminal-bg);
+    color: var(--text-color);
+    border: 1px solid var(--terminal-border);
+    border-radius: 3px;
+    flex: 1;
+}
+
+.quest-controls button {
+    padding: 0.3rem 0.6rem;
+    background-color: var(--button-color);
+    color: var(--text-color);
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.quest-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.quest-item {
+    background-color: #1a1a1a;
+    padding: 0.8rem;
+    border-radius: 3px;
+    border-left: 3px solid #666;
+}
+
+.quest-item.active {
+    border-left: 3px solid var(--accent-color);
+}
+
+.quest-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid #333;
+    padding-bottom: 0.5rem;
+}
+
+.quest-title {
+    font-size: 1.1rem;
+    color: var(--accent-color);
+    margin: 0;
+}
+
+.quest-status {
+    font-size: 0.8rem;
+    padding: 0.2rem 0.4rem;
+    background-color: #2a2a2a;
+    border-radius: 3px;
+    color: #aaa;
+}
+
+.quest-item.active .quest-status {
+    background-color: #3a3a00;
+    color: var(--accent-color);
+}
+
+.quest-description {
+    margin-bottom: 0.8rem;
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+.quest-objectives h4, .quest-rewards h4 {
+    color: #aaa;
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+}
+
+.quest-objectives ul, .quest-rewards ul {
+    padding-left: 1.5rem;
+    font-size: 0.9rem;
+}
+
+.quest-objectives li, .quest-rewards li {
+    margin-bottom: 0.2rem;
+}
+
+.quest-objectives li.completed {
+    text-decoration: line-through;
+    color: #666;
+}
+
+/* Character Info Styles */
+.character-controls {
+    margin-bottom: 1rem;
+}
+
+.character-controls select {
+    width: 100%;
+    padding: 0.3rem;
+    background-color: var(--terminal-bg);
+    color: var(--text-color);
+    border: 1px solid var(--terminal-border);
+    border-radius: 3px;
+}
+
+.character-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.character-card {
+    display: flex;
+    background-color: #1a1a1a;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.character-portrait {
+    width: 100px;
+    height: 100px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.character-portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.character-details {
+    flex: 1;
+    padding: 0.8rem;
+}
+
+.character-details h3 {
+    margin: 0 0 0.3rem;
+    color: var(--accent-color);
+}
+
+.character-subtitle {
+    font-size: 0.8rem;
+    color: #aaa;
+    margin-bottom: 0.8rem;
+}
+
+.character-stats {
+    margin-bottom: 0.8rem;
+}
+
+.stat-group {
+    display: flex;
+    gap: 0.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-label {
+    font-size: 0.7rem;
+    color: #aaa;
+}
+
+.stat-value {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.health-status {
+    margin-top: 0.5rem;
+}
+
+.health-bar {
+    height: 8px;
+    background-color: #2a2a2a;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 0.2rem;
+}
+
+.health-fill {
+    height: 100%;
+    background-color: #4a0;
+    border-radius: 4px;
+}
+
+.character-equipment h4, .character-notes h4 {
+    font-size: 0.9rem;
+    color: #aaa;
+    margin-bottom: 0.3rem;
+    margin-top: 0.8rem;
+}
+
+.character-equipment ul {
+    padding-left: 1.5rem;
+    font-size: 0.9rem;
+}
+
+.character-description p, .character-notes p {
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+/* Original enemy list styles */
+#enemy-list {
+    list-style: none;
+    padding: 0;
+}
+
+#enemy-list li {
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    background-color: #1a1a1a;
+    border-radius: 3px;
+    display: flex; /* Align items */
+    justify-content: space-between; /* Space out elements */
+    align-items: center;
+}
+
+.enemy-hp {
+    font-weight: bold;
+    color: var(--accent-color);
+}
+
+#enemy-list .toggle-hp { /* Style for the toggle button */
+    padding: 0.2rem 0.4rem;
+    font-size: 0.8em;
+    margin-left: 10px;
+    background-color: var(--button-color);
+    color: var(--text-color);
+    border: 1px solid var(--terminal-border);
+    cursor: pointer;
+}
+
+#show-enemy-hp-toggle {
+    margin-top: 10px;
+}
+
+/* Middle Column: Controls */
+.controls-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Right Column: Chat */
+.chat-column {
+    display: flex;
+    flex-direction: column;
+    min-height: 0; /* Prevent flex blowout */
+}
+
+/* Game Output Terminal (now in right column) */
+.terminal {
+    background-color: var(--terminal-bg);
+    border: 1px solid var(--terminal-border);
+    border-radius: 5px;
+    padding: 1rem;
+    /* height: 400px; /* Removed fixed height */
+    flex: 1; /* Allow terminal to grow */
+    overflow-y: scroll;
+    font-family: 'Courier New', monospace;
+    white-space: pre-wrap;
+    line-height: 1.4;
+    min-height: 100px; /* Ensure it has some minimum height */
+}
+
+.terminal::-webkit-scrollbar {
+    width: 8px;
+}
+
+.terminal::-webkit-scrollbar-track {
+    background: var(--terminal-bg);
+}
+
+.terminal::-webkit-scrollbar-thumb {
+    background-color: var(--terminal-border);
+    border-radius: 4px;
+}
+
+.welcome-message {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.welcome-message h2 {
+    color: var(--accent-color);
+    margin-bottom: 0.5rem;
+}
+
+/* Message styling */
+.message {
+    margin-bottom: 0.5rem;
+    animation: fade-in 0.3s ease-in;
+}
+
+.gm-message {
+    color: var(--accent-color);
+}
+
+.player-message {
+    color: var(--text-color);
+}
+
+.system-message {
+    color: var(--primary-color);
+    font-style: italic;
+}
+
+.error-message {
+    color: #ff4a4a;
+}
+
+/* Controls Column Styling */
+.voice-controls, .game-actions { /* Apply to sections in middle column */
+    background-color: var(--dark-accent);
+    padding: 1rem;
+    border-radius: 5px;
+}
+
+.voice-controls h3, .game-actions h3 { /* Style both headings */
+    color: var(--accent-color);
+    margin-bottom: 0.5rem;
+    text-align: center; /* Center headings */
+}
+
+.voice-selector {
+    margin-bottom: 0.5rem;
+}
+
+.voice-selector label {
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.voice-selector select {
+    width: 100%;
+    padding: 0.5rem;
+    background-color: var(--terminal-bg);
+    color: var(--text-color);
+    border: 1px solid var(--terminal-border);
+    border-radius: 3px;
+}
+
+.toggle-btn {
+    padding: 0.5rem 1rem;
+    background-color: var(--button-color);
+    color: var(--text-color);
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%;
+    margin-top: 0.5rem; /* Add space above toggle */
+}
+
+.toggle-btn:hover {
+    background-color: var(--button-hover);
+}
+
+.toggle-btn.off {
+    background-color: #4a0000;
+}
+
+.toggle-btn.on {
+    background-color: #004a00;
+}
+
+.game-actions {
+    display: flex; /* Changed to flex */
+    flex-direction: column; /* Stack buttons vertically */
+    gap: 0.5rem;
+}
+
+.game-actions button {
+    padding: 0.5rem;
+    background-color: var(--button-color);
+    color: var(--text-color);
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%; /* Make buttons full width */
+}
+
+.game-actions button:hover {
+    background-color: var(--button-hover);
+}
+
+/* Command Input (in right column) */
+.command-input {
+    margin-top: 1rem; /* Keep margin */
+    flex-shrink: 0; /* Prevent input from shrinking */
+}
+
+#command-form {
+    display: flex;
+    gap: 0.5rem;
+}
+
+#command-input {
+    flex: 1;
+    padding: 0.75rem;
+    background-color: var(--terminal-bg);
+    color: var(--text-color);
+    border: 1px solid var(--terminal-border);
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+}
+
+#command-form button {
+    padding: 0.75rem 1.5rem;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-weight: bold;
+}
+
+#command-form button:hover {
+    background-color: #d74920;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content {
+    background-color: var(--modal-bg);
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid var(--terminal-border);
+    border-radius: 5px;
+    width: 80%;
+    max-width: 800px;
+}
+
+.close {
+    color: var(--text-color);
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+#modal-title {
+    color: var(--accent-color);
+    margin-bottom: 1rem;
+}
+
+#modal-body {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 1rem 0;
+    border-top: 1px solid var(--terminal-border);
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Animations */
+@keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Responsive design */
+@media (max-width: 1024px) { /* Adjust breakpoint */
+    main.main-layout {
+        grid-template-columns: 1fr; /* Stack columns */
+        height: auto; /* Allow height to adjust */
+    }
+    .map-area, .controls-column, .chat-column {
+        min-height: 300px; /* Give columns some height */
+    }
+    .terminal {
+         height: 350px; /* Restore some fixed height on smaller screens if needed */
+         flex: none; /* Override flex grow */
+    }
+    .controls-column {
+        flex-direction: row; /* Arrange controls side-by-side */
+        gap: 1rem;
+    }
+    .voice-controls, .game-actions {
+        flex: 1; /* Allow control sections to share space */
+    }
+    .game-actions {
+        flex-direction: row; /* Buttons side-by-side again */
+        flex-wrap: wrap; /* Allow wrapping */
+    }
+    .game-actions button {
+        width: auto; /* Let buttons size naturally */
+        flex-grow: 1; /* Allow buttons to grow */
+    }
+
+}
+
+@media (max-width: 600px) {
+    .controls-column {
+        flex-direction: column; /* Stack controls again on very small screens */
+    }
+     .game-actions {
+        flex-direction: column; /* Stack buttons again */
+    }
+     .game-actions button {
+        width: 100%; /* Full width buttons */
+    }
+    header h1 {
+        font-size: 1.8rem;
+    }
+    #command-form button {
+        padding: 0.75rem 1rem;
+    }
+}

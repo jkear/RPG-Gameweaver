@@ -1,0 +1,20 @@
+# Ignore Python bytecode and cache directories
+__pycache__/
+*.py[cod]
+
+# Ignore environment variables file
+.env
+
+# Ignore command line version of the game
+rpg_gameweaver_core.py
+
+# Ignore documentation and database directories
+docs/
+chroma_db/
+
+# Ignore system files
+.DS_Store
+
+# Ignore other temporary files
+*.log
+*.tmp
